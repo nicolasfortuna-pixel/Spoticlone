@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spoticlone</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <header>
+        <h1>Spoticlone Admin</h1>
+        <button id="btn-abrir">Adicionar músicas</button>
+    </header>
+
+    <main>
+        <div id="lista"></div>
+    </main>
+
+    <dialog id="modal">
+        <form id="form-musica">
+            <label for="titulo">Título</label>
+            <input id="titulo" type="text" required>
+
+            <label for="artista">Artista</label>
+            <input id="artista" type="text" required>
+
+            <label for="genero">Estilo</label>
+            <select id="genero" required>
+                <option value="">Selecione...</option>
+                <option value="Rock">Rock</option>
+                <option value="Pop">Pop</option>
+                <option value="Indie">Indie</option>
+            </select>
+
+            <label for="capa">Link da capa</label>
+            <input id="capa" type="url" required>
+
+            <label for="audio">Link do áudio</label>
+            <input id="audio" type="url" required>
+
+            <button type="submit">Salvar</button>
+            <button type="button" id="btn-cancelar">Cancelar</button>
+        </form>
+    </dialog>
+
+    <footer></footer>
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>
