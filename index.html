@@ -3,10 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <title>Gratisfy</title>
+    <title>Spoticlone</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="./images/spoticlone-logo.png">
 </head>
 <body>
-    
+    <header>
+        <h1>Gratisfy</h1>
+    </header>
+
+    <main>
+        <div id="lista"></div>
+    </main>
+
+    <footer id="barra-player">
+        <img id="player-capa" alt="">
+        <div id="player-info">
+            <strong id="player-titulo">Nenhuma música tocando</strong>
+            <span id="player-artista"></span>
+        </div>
+        <audio id="player" controls></audio>
+    </footer>
+
+    <script type="module" src="js/index.js"></script>
 </body>
 </html>

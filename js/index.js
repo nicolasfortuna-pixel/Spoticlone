@@ -1,5 +1,5 @@
   import { db } from "./firebase.js";
-  import { ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
   const modal = document.getElementById("modal");
   const form = document.getElementById("form-musica");
   let musicas = {};        // copia local dos dados do banco
