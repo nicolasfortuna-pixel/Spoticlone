@@ -48,7 +48,7 @@
 
   function criarCard(id, m) {
     return `
-      <div class="card">
+      <div class="card" data-id="${id}">
         <img class="capa" src="${esc(m.capa)}" alt="Capa de ${esc(m.titulo)}">
         <div class="info">
           <h3>${esc(m.titulo)}</h3>
