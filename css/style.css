@@ -530,24 +530,24 @@ dialog h2 {
     color: #91a0b8;
 }
 
-/* PLAYER REDONDO (tela do usuário) */
+/* ============ PLAYER REDONDO (tela do usuário) ============ */
 
 body.pagina-player { padding-bottom: 100px; }
 body.pagina-player .card { cursor: pointer; }
- 
+
 .card.ativo {
   border-color: rgba(0, 200, 83, 0.6);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.035),
     0 0 0 1px rgba(0, 200, 83, 0.25),
     0 8px 25px rgba(0, 0, 0, 0.18);
 }
- 
+
 @keyframes girar { to { transform: rotate(360deg); } }
 @keyframes aparecer {
   from { opacity: 0; transform: scale(0.92); }
   to   { opacity: 1; transform: scale(1); }
 }
- 
+
 /* Janela do player (centralizada pelo <dialog>) */
 #player-modal {
   width: 380px;
@@ -556,14 +556,14 @@ body.pagina-player .card { cursor: pointer; }
   border-radius: 34px;
   text-align: center;
 }
- 
+
 #player-modal[open] {
   display: flex;
   flex-direction: column;
   align-items: center;
   animation: aparecer 0.25s ease;
 }
- 
+
 .player-fechar {
   position: absolute;
   top: 16px;
@@ -576,7 +576,7 @@ body.pagina-player .card { cursor: pointer; }
   transition: 0.2s;
 }
 .player-fechar:hover { color: #fff; }
- 
+
 /* Disco: capa redonda + anel de progresso */
 .disco {
   position: relative;
@@ -585,7 +585,7 @@ body.pagina-player .card { cursor: pointer; }
   margin-bottom: 24px;
   cursor: pointer;
 }
- 
+
 .anel {
   position: absolute;
   inset: 0;
@@ -602,7 +602,7 @@ body.pagina-player .card { cursor: pointer; }
   stroke-dashoffset: 590.62;
   transition: stroke-dashoffset 0.25s linear;
 }
- 
+
 #player-capa {
   position: absolute;
   top: 8%;
@@ -616,7 +616,7 @@ body.pagina-player .card { cursor: pointer; }
   animation-play-state: paused;
 }
 .disco.tocando #player-capa { animation-play-state: running; }
- 
+
 /* Textos */
 #player-titulo {
   max-width: 100%;
@@ -633,7 +633,7 @@ body.pagina-player .card { cursor: pointer; }
   color: #718096;
   font-variant-numeric: tabular-nums;
 }
- 
+
 /* Controles */
 .controles {
   display: flex;
@@ -667,7 +667,7 @@ body.pagina-player .card { cursor: pointer; }
   box-shadow: 0 8px 25px rgba(0, 200, 83, 0.3);
 }
 .controles .btn-play:hover { background: rgba(0, 220, 90, 0.95); }
- 
+
 /* Mini player: capa pequena no canto, quando o player está fechado */
 #mini-player {
   position: fixed;
@@ -687,7 +687,7 @@ body.pagina-player .card { cursor: pointer; }
 }
 #mini-player[hidden] { display: none; }
 #mini-player:hover { transform: scale(1.08); }
- 
+
 #mini-capa {
   width: 100%;
   height: 100%;
@@ -697,7 +697,7 @@ body.pagina-player .card { cursor: pointer; }
   animation-play-state: paused;
 }
 #mini-player.tocando #mini-capa { animation-play-state: running; }
- 
+
 /* Foco visível para quem navega pelo teclado */
 .controles button:focus-visible,
 .player-fechar:focus-visible,
@@ -705,7 +705,7 @@ body.pagina-player .card { cursor: pointer; }
   outline: 2px solid #00c853;
   outline-offset: 3px;
 }
- 
+
 /* Respeita quem prefere menos movimento */
 @media (prefers-reduced-motion: reduce) {
   #player-capa,
