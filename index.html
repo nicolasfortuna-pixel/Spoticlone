@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gratisfy</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="./images/spoticlone-logo.png">
+</head>
+<body class="pagina-player">
+    <header>
+        
+
+    <div class="cabecalho-esquerda">
+
+        <img
+            src="images/spoticlone-logo.png"
+            alt="Logo Gratisfy"
+            class="logo"
+        >
+
+        <div>
+            <h1>Gratisfy</h1>
+            <p>Escolha uma música para ouvir</p>
+        </div>
+
+    </div>
+
+</header>
+
+    <main>
+        <div id="lista"></div>
+    </main>
+
+    <audio id="player"></audio>
+
+    <dialog id="player-modal">
+        <button id="btn-fechar-player" class="player-fechar" aria-label="Fechar player">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="disco" id="disco">
+            <svg class="anel" viewBox="0 0 200 200" aria-hidden="true">
+                <circle class="anel-fundo" cx="100" cy="100" r="94"></circle>
+                <circle class="anel-progresso" id="anel-progresso" cx="100" cy="100" r="94"></circle>
+            </svg>
+            <img id="player-capa" alt="Capa da música">
+        </div>
+
+        <h2 id="player-titulo">Nenhuma música tocando</h2>
+        <p id="player-artista"></p>
+        <p id="player-tempo">0:00 / 0:00</p>
+
+        <div class="controles">
+            <button id="btn-anterior" aria-label="Música anterior"><i class="bi bi-skip-start-fill"></i></button>
+            <button id="btn-play" class="btn-play" aria-label="Tocar ou pausar"><i class="bi bi-play-fill"></i></button>
+            <button id="btn-proxima" aria-label="Próxima música"><i class="bi bi-skip-end-fill"></i></button>
+        </div>
+    </dialog>
+
+    <button id="mini-player" hidden aria-label="Abrir o player">
+        <img id="mini-capa" alt="">
+    </button>
+
+    <script type="module" src="js/index.js"></script>
+</body>
+</html>
