@@ -6,7 +6,9 @@ const ARQUIVOS = [
   "./css/style.css",
   "./js/index.js",
   "./js/firebase.js",
-  "./images/spoticlone-logo.png"
+  "./images/spoticlone-logo.png",
+  "./images/icon-192.png",
+  "./images/icon-512.png"
 ];
 
 self.addEventListener("install", (evento) => {
