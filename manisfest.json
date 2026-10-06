@@ -1,0 +1,16 @@
+{
+  "name": "Gratisfy",
+  "short_name": "Gratisfy",
+  "description": "Seu player de músicas",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#101820",
+  "theme_color": "#00c853",
+  "icons": [
+    {
+      "src": "./images/spoticlone-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
