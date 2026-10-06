@@ -1,7 +1,7 @@
 {
   "name": "Gratisfy",
   "short_name": "Gratisfy",
-  "description": "Seu player de músicas",
+  "description": "Seu player de músicas, Spoticlone",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
