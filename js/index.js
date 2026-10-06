@@ -1,242 +1,245 @@
 import { db } from "./firebase.js";
+
 import {
   ref,
   onValue,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-let musicas = {}; // copia local dos dados do banco
-let idAtual = null; // música carregada no player
 
+let musicas = {};
+let idAtual = null;
+
+// Elementos HTML
 const lista = document.getElementById("lista");
 const player = document.getElementById("player");
+
 const modal = document.getElementById("player-modal");
-const disco = document.getElementById("disco");
-const anel = document.getElementById("anel-progresso");
+
 const capa = document.getElementById("player-capa");
 const titulo = document.getElementById("player-titulo");
 const artista = document.getElementById("player-artista");
-const tempo = document.getElementById("player-tempo");
+
 const btnPlay = document.getElementById("btn-play");
 const btnAnterior = document.getElementById("btn-anterior");
 const btnProxima = document.getElementById("btn-proxima");
 const btnFechar = document.getElementById("btn-fechar-player");
-const mini = document.getElementById("mini-player");
-const miniCapa = document.getElementById("mini-capa");
 
+// Capa padrão
 const CAPA_PADRAO =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='80' height='80' fill='%23333'/%3E%3C/svg%3E";
 
-const ICONE_PLAY = '<i class="bi bi-play-fill"></i>';
-const ICONE_PAUSE = '<i class="bi bi-pause-fill"></i>';
-
-// Comprimento do anel de progresso (2 * π * raio, com raio = 94 no SVG)
-const CIRCUNFERENCIA = 2 * Math.PI * 94;
-anel.style.strokeDasharray = CIRCUNFERENCIA;
-anel.style.strokeDashoffset = CIRCUNFERENCIA;
-
-// Evita que texto digitado vire HTML (segurança)
-const esc = (t) =>
-  String(t ?? "").replace(
+// Evita que texto vire HTML
+const esc = (texto) =>
+  String(texto ?? "").replace(
     /[&<>"']/g,
-    (c) =>
+    (caractere) =>
       ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
         "'": "&#39;",
-      }[c])
+      })[caractere],
   );
 
-function criarCard(id, m) {
+// Cria os cards das músicas
+function criarCard(id, musica) {
   return `
-      <div class="card${id === idAtual ? " ativo" : ""}" data-id="${esc(id)}">
-        <img class="capa" src="${esc(m.capa)}" alt="Capa de ${esc(m.titulo)}">
-        <div class="info">
-          <h3>${esc(m.titulo)}</h3>
-          <p>${esc(m.artista)}</p>
-          <span class="tag tag-${esc(m.genero).toLowerCase()}">${esc(
-    m.genero
-  )}</span>
+        <div class="card ${id === idAtual ? "ativo" : ""}" data-id="${esc(id)}">
+
+            <img
+                class="capa"
+                src="${esc(musica.capa)}"
+                alt="Capa de ${esc(musica.titulo)}"
+            >
+
+            <div class="info">
+
+                <h3>${esc(musica.titulo)}</h3>
+
+                <p>${esc(musica.artista)}</p>
+
+                <span class="tag tag-${esc(musica.genero).toLowerCase()}">
+                    ${esc(musica.genero)}
+                </span>
+
+            </div>
+
         </div>
-      </div>
-      `;
+    `;
 }
 
-/* ---------- Funções do player ---------- */
+// Carrega uma música
+function carregar(id) {
+  const musica = musicas[id];
 
-function formatarTempo(segundos) {
-  if (!isFinite(segundos)) return "0:00";
-  const min = Math.floor(segundos / 60);
-  const seg = String(Math.floor(segundos % 60)).padStart(2, "0");
-  return `${min}:${seg}`;
+  if (!musica) return;
+
+  idAtual = id;
+
+  // Caminho do áudio
+  let urlAudio = musica.audio;
+
+  if (!urlAudio.startsWith("http")) {
+    urlAudio = `./${urlAudio}`;
+  }
+
+  console.log("Tocando:", musica.titulo);
+  console.log("Áudio:", urlAudio);
+
+  // Coloca a música no player
+  player.src = urlAudio;
+
+  // Atualiza informações
+  capa.src = musica.capa;
+  titulo.textContent = musica.titulo;
+  artista.textContent = musica.artista;
+
+  // Marca o card atual
+  lista.querySelectorAll(".card").forEach((card) => {
+    card.classList.toggle("ativo", card.dataset.id === id);
+  });
+
+  // Toca
+  tocar();
 }
 
-function atualizarProgresso() {
-  const duracao = player.duration;
-  const pct = duracao ? player.currentTime / duracao : 0;
-  anel.style.strokeDashoffset = CIRCUNFERENCIA * (1 - pct);
-  tempo.textContent = `${formatarTempo(player.currentTime)} / ${formatarTempo(
-    duracao
-  )}`;
-}
-
-function mostrarTocando(tocando) {
-  btnPlay.innerHTML = tocando ? ICONE_PAUSE : ICONE_PLAY;
-  disco.classList.toggle("tocando", tocando);
-  mini.classList.toggle("tocando", tocando);
-}
-
+// Toca a música
 async function tocar() {
   try {
     await player.play();
   } catch (erro) {
-    // AbortError = trocou de música no meio do carregamento (normal)
-    if (erro.name !== "AbortError") {
-      console.error("Erro ao tocar:", erro);
-    }
+    console.error("Erro ao tocar:", erro);
   }
 }
 
+// Play / Pause
 function alternar() {
   if (player.paused) {
-    tocar();
+    player.play();
   } else {
     player.pause();
   }
 }
 
-function carregar(id) {
-  const musica = musicas[id];
-  if (!musica) return;
-
-  idAtual = id;
-  player.src = musica.audio;
-  capa.src = musica.capa;
-  miniCapa.src = musica.capa;
-  titulo.textContent = musica.titulo;
-  artista.textContent = musica.artista;
-  anel.style.strokeDashoffset = CIRCUNFERENCIA;
-  tempo.textContent = "0:00 / 0:00";
-  mini.hidden = false;
-
-  lista.querySelectorAll(".card").forEach((c) => {
-    c.classList.toggle("ativo", c.dataset.id === id);
-  });
-
-  tocar();
-}
-
-// passo = 1 (próxima) ou -1 (anterior); volta ao início/fim da lista
+// Próxima ou anterior
 function trocar(passo) {
   const ids = Object.keys(musicas);
+
   if (ids.length === 0) return;
-  const i = ids.indexOf(idAtual);
-  carregar(ids[(i + passo + ids.length) % ids.length]);
+
+  const indice = ids.indexOf(idAtual);
+
+  const novoIndice = (indice + passo + ids.length) % ids.length;
+
+  carregar(ids[novoIndice]);
 }
 
+// Abre o player
 function abrirPlayer() {
-  if (!modal.open) modal.showModal();
+  if (!modal.open) {
+    modal.showModal();
+  }
 }
 
-/* ---------- Lista (Read) ---------- */
+// CARREGAR MÚSICAS DO FIREBASE
 
 onValue(
   ref(db, "musicas"),
+
   (snapshot) => {
     const dados = snapshot.val();
+
     musicas = dados || {};
 
     if (!dados) {
       lista.innerHTML = "<p>Nenhuma música cadastrada.</p>";
+
       return;
     }
 
     lista.innerHTML = Object.entries(dados)
+
       .map(([id, musica]) => criarCard(id, musica))
+
       .join("");
 
-    // Capa com link quebrado: troca pela capa padrão
+    // Capa quebrada
     lista.querySelectorAll(".capa").forEach((img) => {
       img.addEventListener(
         "error",
         () => {
           img.src = CAPA_PADRAO;
         },
-        { once: true }
+        { once: true },
       );
     });
   },
+
   (erro) => {
     console.error("Erro ao ler o banco:", erro);
+
     lista.innerHTML = "<p>Não foi possível carregar as músicas.</p>";
-  }
+  },
 );
 
-/* ---------- Eventos ---------- */
+// EVENTOS
 
-// Clique num card: carrega a música (se for outra) e abre o player
-lista.addEventListener("click", (e) => {
-  const card = e.target.closest(".card");
+// Clicar em uma música
+lista.addEventListener("click", (evento) => {
+  const card = evento.target.closest(".card");
 
   if (!card) return;
 
   const id = card.dataset.id;
 
-  if (id !== idAtual || player.error) carregar(id);
+  if (id !== idAtual) {
+    carregar(id);
+  }
+
   abrirPlayer();
 });
 
-// Clique no disco: na capa = play/pause | no anel = pular para aquele ponto
-disco.addEventListener("click", (e) => {
-  const r = disco.getBoundingClientRect();
-  const x = e.clientX - (r.left + r.width / 2);
-  const y = e.clientY - (r.top + r.height / 2);
-
-  if (Math.hypot(x, y) < r.width * 0.43) {
-    alternar();
-    return;
-  }
-
-  if (!player.duration) return;
-  let angulo = Math.atan2(x, -y); // 0 = topo, sentido horário
-  if (angulo < 0) angulo += 2 * Math.PI;
-  player.currentTime = (angulo / (2 * Math.PI)) * player.duration;
-});
-
+// Play / Pause
 btnPlay.addEventListener("click", alternar);
-btnAnterior.addEventListener("click", () => trocar(-1));
-btnProxima.addEventListener("click", () => trocar(1));
 
-btnFechar.addEventListener("click", () => modal.close());
-mini.addEventListener("click", abrirPlayer);
-
-// Clicar fora do player (no fundo escurecido) fecha
-modal.addEventListener("click", (e) => {
-  const r = modal.getBoundingClientRect();
-  const fora =
-    e.clientX < r.left ||
-    e.clientX > r.right ||
-    e.clientY < r.top ||
-    e.clientY > r.bottom;
-  if (fora) modal.close();
+// Música anterior
+btnAnterior.addEventListener("click", () => {
+  trocar(-1);
 });
 
-// Eventos do <audio>
-player.addEventListener("play", () => mostrarTocando(true));
-player.addEventListener("pause", () => mostrarTocando(false));
-player.addEventListener("timeupdate", atualizarProgresso);
-player.addEventListener("loadedmetadata", atualizarProgresso);
-player.addEventListener("ended", () => trocar(1));
+// Próxima música
+btnProxima.addEventListener("click", () => {
+  trocar(1);
+});
 
+// Fechar player
+btnFechar.addEventListener("click", () => {
+  modal.close();
+});
+
+// Quando a música terminar,
+// toca automaticamente a próxima
+player.addEventListener("ended", () => {
+  trocar(1);
+});
+
+// Atualiza o botão Play/Pause
+player.addEventListener("play", () => {
+  btnPlay.innerHTML = '<i class="bi bi-pause-fill"></i>';
+});
+
+player.addEventListener("pause", () => {
+  btnPlay.innerHTML = '<i class="bi bi-play-fill"></i>';
+});
+
+// Erro no áudio
 player.addEventListener("error", () => {
-  console.error("Erro no áudio:", player.error, player.src);
+  console.error("Erro no áudio:", player.error);
+
   titulo.textContent = "Não foi possível tocar esta música";
-  mostrarTocando(false);
 });
 
-// Capas quebradas no player
-[capa, miniCapa].forEach((img) => {
-  img.addEventListener("error", () => {
-    if (!img.src.startsWith("data:")) img.src = CAPA_PADRAO;
-  });
+// Capa quebrada
+capa.addEventListener("error", () => {
+  capa.src = CAPA_PADRAO;
 });
